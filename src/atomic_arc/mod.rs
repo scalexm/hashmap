@@ -114,7 +114,7 @@ impl<T, P: NullPolicy<T>> AtomicArc<T, P> {
 
     /// Compare the contents of this `AtomicArc<T>` with `current`, and store
     /// `new` if they are equal. If they are in fact not equal, return `false`.
-    pub fn compare_exchange(&self, current: &P::Arc, new: P::Arc) -> bool {
+    pub fn try_store(&self, current: &P::Arc, new: P::Arc) -> bool {
         let new_ptr = P::strong_acquire(&new);
         let current_ptr = P::inner(current);
 
@@ -127,7 +127,7 @@ impl<T, P: NullPolicy<T>> AtomicArc<T, P> {
 
             match self.ptr_and_count.compare_exchange_weak(
                 old_ptr_and_count,
-                new_ptr,
+                new_ptr >> PTR_SHIFT,
                 Ordering::AcqRel,
                 Ordering::Relaxed,
             ) {
