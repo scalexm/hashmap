@@ -1,8 +1,8 @@
 pub mod atomic_arc;
-//pub mod hash_map;
+pub mod hash_map;
 
 #[test]
-fn test() {
+fn test_atomic_arc() {
     #[derive(Debug)]
     struct Foo(i32);
 
@@ -29,4 +29,19 @@ fn test() {
     println!("{:?}", x.load());
     x.store(Some(Arc::new(Foo(7))));
     println!("{:?}", x.load());
+}
+
+#[test]
+fn test_hash_map() {
+    use hash_map::HashMap;
+
+    let x: HashMap<i32, i32> = HashMap::new();
+    println!("{:?}", x.get(&0));
+    for i in 0..=7 {
+        x.insert(i, i * 8);
+        println!("inserted {}", i);
+    }
+    for i in 0..=7 {
+        println!("{:?}", x.get(&i));
+    }
 }
